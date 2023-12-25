@@ -27,19 +27,10 @@ for WEBSITE in "${!URL[@]}"; do
 
   # Check if website is not reachable
   if [ $HTTP_STATUS -ne 200 ]; then
-    # If not, stop and start the VM or LXC container
-    if [ ${NODE[$WEBSITE]+_} ]; then
-      # It's a VM, restart and send email
-      curl -s -X POST -H "Authorization: PVEAPIToken=${API_TOKEN[api]}" -H "Content-Type: application/json" -d '{}' "${API_URL[api]}/nodes/${NODE[$WEBSITE]}/qemu/${VMID[$WEBSITE]}/status/stop"
-      sleep 10
-      curl -s -X POST -H "Authorization: PVEAPIToken=${API_TOKEN[api]}" -H "Content-Type: application/json" -d '{}' "${API_URL[api]}/nodes/${NODE[$WEBSITE]}/qemu/${VMID[$WEBSITE]}/status/start"
-      echo "VM ${VMID[$WEBSITE]} has been restarted due to HTTP error $HTTP_STATUS on website ${URL[$WEBSITE]}. Please check logs!" | mail -s "VM Restarted" $EMAIL
-    else
-      # It's an LXC container, restart and send email
-      curl -s -X POST -H "Authorization: PVEAPIToken=${API_TOKEN[api]}" -H "Content-Type: application/json" -d '{}' "${API_URL[api]}/nodes/${NODE[api]}/lxc/${CTID[$WEBSITE]}/status/stop"
-      sleep 10
-      curl -s -X POST -H "Authorization: PVEAPIToken=${API_TOKEN[api]}" -H "Content-Type: application/json" -d '{}' "${API_URL[api]}/nodes/${NODE[api]}/lxc/${CTID[$WEBSITE]}/status/start"
-      echo "LXC container ${CTID[$WEBSITE]} has been restarted due to HTTP error $HTTP_STATUS on website ${URL[$WEBSITE]}. Please check logs!" | mail -s "LXC Container Restarted" $EMAIL
-    fi
+    # Stop and start the VM and send email
+    curl -s -X POST -H "Authorization: PVEAPIToken=${API_TOKEN[api]}" -H "Content-Type: application/json" -d '{}' "${API_URL[api]}/nodes/${NODE[$WEBSITE]}/qemu/${VMID[$WEBSITE]}/status/stop"
+    sleep 5
+    curl -s -X POST -H "Authorization: PVEAPIToken=${API_TOKEN[api]}" -H "Content-Type: application/json" -d '{}' "${API_URL[api]}/nodes/${NODE[$WEBSITE]}/qemu/${VMID[$WEBSITE]}/status/start"
+    echo "VM ${VMID[$WEBSITE]} on node ${NODE[$WEBSITE]} has been restarted due to HTTP error $HTTP_STATUS on website ${URL[$WEBSITE]}" | mail -s "VM Restarted" $EMAIL
   fi
 done
