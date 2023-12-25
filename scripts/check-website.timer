@@ -1,0 +1,9 @@
+[Unit]
+Description=Runs check-website every 5 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=multi-user.target

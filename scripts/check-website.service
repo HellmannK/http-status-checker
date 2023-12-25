@@ -1,0 +1,5 @@
+[Unit]
+Description=Check website status
+
+[Service]
+ExecStart=/path/to/your/script.sh
