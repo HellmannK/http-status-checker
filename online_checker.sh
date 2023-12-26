@@ -6,17 +6,16 @@
 CONFIG_FILE="/path/to/credentials.conf"
 source $CONFIG_FILE
 
+# Load http-code file
+HTTP_FILE="/path/to/http_statuscode.conf"
+source $HTTP_FILE
+
 # Email to notify
 SENT_TO_EMAIL="your-email@domain.com"
 FROM_EMAIL="from@domain.com"
 
-# Loop through each website block
-for ((i=1;i<=WEBSITE_COUNT;i++)); do
-  # Get HTTP status code
-  HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${URL[i]})
-
-  # Check if website is not reachable
-  if [ $HTTP_STATUS -ne 200 ]; then
+  # Check if HTTP status code is in the list of codes to watch
+  if [[ " ${HTTP_CODES[*]} " == *"$HTTP_STATUS"* ]]; then
     # Determine the type of the resource (lxc or qemu)
     if [[ ${LXC[i]} == "YES" ]]; then
         TYPE="lxc"
