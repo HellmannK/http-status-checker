@@ -13,7 +13,8 @@ CONFIG_FILE="/path/to/credentials.conf"
 source $CONFIG_FILE
 
 # Email to notify
-EMAIL="your-email@domain.com"
+$SENT_TO_EMAIL="your-email@domain.com"
+$FROM_EMAIL="from@domain.com"
 
 # Loop through each website block
 for ((i=1;i<=WEBSITE_COUNT;i++)); do
@@ -37,6 +38,6 @@ for ((i=1;i<=WEBSITE_COUNT;i++)); do
     sleep 5
     curl -s -X POST -H "Authorization: PVEAPIToken=$API_TOKEN" -H "Content-Type: application/json" -d '{}' "${API_URL}/nodes/${NODE[i]}/${TYPE}/${VMID[i]}/status/start"
     # Send Email if machine had http error code
-    echo "VM ${VMID[i]} on node ${NODE[i]} has been restarted due to HTTP error $HTTP_STATUS on website ${URL[i]}" | mail -s "VM Restarted" $EMAIL
+    echo "VM ${VMID[i]} on node ${NODE[i]} has been restarted due to HTTP error $HTTP_STATUS on website ${URL[i]}" | mail -r $FROM_EMAIL -s "VM Restarted" $SENT_TO_EMAIL
   fi
 done
