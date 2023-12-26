@@ -9,7 +9,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Load the ini file
-CONFIG_FILE="/path/to/watchdog_config.ini"
+CONFIG_FILE="/path/to/credentials.conf"
 source $CONFIG_FILE
 
 # Email to notify
